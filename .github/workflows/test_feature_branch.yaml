@@ -1,0 +1,13 @@
+name: devops-intern-test_feature_branch
+
+on:
+  push:
+    branches-ignore:
+      - master
+
+jobs:
+  test-features:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
