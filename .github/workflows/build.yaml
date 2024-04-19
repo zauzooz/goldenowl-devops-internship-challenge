@@ -20,7 +20,7 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v4
         with:
-          context: ./scr
+          context: ./src
           file: .Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/intern-devops:latest
