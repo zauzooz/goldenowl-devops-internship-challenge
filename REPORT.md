@@ -1,6 +1,6 @@
 # REPORT
 
-## DOCKERNIZES NODEJS APP
+## 2. Dockerizes a Node.js application.
 
 Tại thư mục `src/`, tạo một tệp `Dockerfile` với nội dung như sau:
 
@@ -36,4 +36,65 @@ Build image by using `sudo docker build -t honeypot/demo .`
 
 Running docker image by using `sudo docker run --name demo -p 3000:3000 -d honeypot/demo`
 
+## 3. Establishes an automated CI/CD build process using GitHub Actions workflow and a container registry service such as DockerHub or Amazon Elastic Container Registry (ECR) or similar services.
+
+Tạo một folder là `.github`, tiếp theo tạo một folder khác có tên là `workflows` bên trong folder `.github`.
+
+Tiếp theo tạo một tệp có tên là `build.yaml` bên trong thư mục `workflows`
+
+```
+name: intern-devops
+
+on:
+  push:
+    branch: ["master"]
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Login Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+      
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./src
+          file: .Dockerfile
+          push: true
+          tag: ${{ secrets.DOCKERHUB_USERNAME }}/intern-devops:latest
+```
+
+Docker repo: <https://hub.docker.com/r/2052120603/intern-devops>
+
+## 4. Initiates CI tests automatically when changes are pushed to the feature branch on GitHub
+
+Tạo một tệp tên là `test-feature-branch.yaml` trong thư mục `.github/workflows`:
+
+```
+name: devops-intern-test_feature_branch
+
+on:
+  push:
+    branches-ignore:
+      - master
+
+jobs:
+  test-features:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+```
+
 ## REFERENCE
+
+[1] <https://www.digitalocean.com/community/tutorials/how-to-build-a-node-js-application-with-docker>
+
+[2] <https://www.youtube.com/watch?v=33Ttv3taz7I>
