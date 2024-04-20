@@ -5,7 +5,7 @@
 Tại thư mục `src/`, tạo một tệp `Dockerfile` với nội dung như sau:
 
 ```
-FROM node:10-alpine
+FROM node:10-alpine.
 
 RUN mkdir -p /home/honeypot/intern_app
 
@@ -32,11 +32,11 @@ EXPOSE 3000
 CMD [ "node", "index.js" ]
 ```
 
-Build image by using `sudo docker build -t honeypot/demo .`
+Xây dựng docker image thực hiện lệnh `sudo docker build -t honeypot/demo .`
 
-Running docker image by using `sudo docker run --name demo -p 3000:3000 -d honeypot/demo`
+Chạy container vừa được xây dựng `sudo docker run --name demo -p 3000:3000 -d honeypot/demo`
 
-## 3. Establishes an automated CI/CD build process using GitHub Actions workflow and a container registry service such as DockerHub or Amazon Elastic Container Registry (ECR) or similar services.
+## 3. Establishes an automated CI/CD build process using GitHub Actions workflow and a container registry service such as DockerHub or Amazon Elastic Container Registry (ECR) or similar services
 
 Tạo một folder là `.github`, tiếp theo tạo một folder khác có tên là `workflows` bên trong folder `.github`.
 
@@ -86,15 +86,22 @@ on:
       - master
 
 jobs:
-  test-features:
+  feature-brand-tests:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+        working-directory: src/
+      - name: NPM Build
+        run: npm run build --if-present
+        working-directory: src/
+      - name: Test
+        run: npm test
+        working-directory: src/
 ```
-
-## REFERENCE
-
-[1] <https://www.digitalocean.com/community/tutorials/how-to-build-a-node-js-application-with-docker>
-
-[2] <https://www.youtube.com/watch?v=33Ttv3taz7I>
